@@ -1,0 +1,4 @@
+
+html, body{margin:0;padding:0;}
+.container{margin-top:15px;margin-left:20px;}
+#cities > p{ border-bottom: 1px green solid; }

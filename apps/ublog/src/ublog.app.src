@@ -1,0 +1,9 @@
+{application, ublog,
+ [
+  {description, "Ublog Application"},
+  {vsn, "0.9"},
+  {registered, []},
+  {applications, [kernel, stdlib, n2o]},
+  {mod, { ublog, []}},
+  {env, []}
+ ]}.
