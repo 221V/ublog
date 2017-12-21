@@ -26,14 +26,14 @@ content_types_provided(Req, State) ->
 
 resource_exists(Req, _State) ->
   
-  io:format("test resource: ~tp~n",[cowboy_req:binding(resource, Req)]), % {<<"users">>,Req}
-  io:format("test resource id: ~tp~n",[cowboy_req:binding(id, Req)]),    % {<<"test1">>,Req} | {undefined,Req}
+  %io:format("test resource: ~tp~n",[cowboy_req:binding(resource, Req)]), % {<<"users">>,Req} | {undefined,Req}
+  %io:format("test resource id: ~tp~n",[cowboy_req:binding(id, Req)]),    % {<<"test1">>,Req} | {undefined,Req}
   
   %case cowboy_req:binding(paste_id, Req) of
   case cowboy_req:binding(resource, Req) of
     {undefined, Req2} ->
-      %{true, Req, index};
-      {false, Req2, <<"error 404, not found">>};
+      %{false, Req2, <<"error 404, not found">>};
+      {true, Req2, <<"this is index">>};
     {PasteID, Req2} ->
       %case valid_path(PasteID) and file_exists(PasteID) of
       case valid_path(PasteID) of
@@ -60,9 +60,12 @@ resource_exists(Req, _State) ->
 %  {format_html(Paste, Lang), Req, Paste}.
 paste_html(Req, Paste) ->
   Paste2 = escape_html_chars(Paste),
-  Html = <<"<!DOCTYPE html><html>",
-  "<head><title>paste</title></head>",
-  "<body><pre><code>", Paste2/binary, "</code></pre></body></html>">>,
+  %Html = <<"<!DOCTYPE html><html>",
+  %"<head><title>paste</title></head>",
+  %"<body><pre><code>", Paste2/binary, "</code></pre></body></html>">>,
+  
+  % ../priv/templates/testrest.html -> testrest_view.beam
+  {ok, Html} = testrest_view:render([ {title, <<"example">>}, {text, Paste2} ]),
   {Html, Req, Paste}.
 
 %paste_text(Req, index) ->
@@ -91,15 +94,15 @@ valid_path(<<$., _T/binary>>) -> false;
 valid_path(<<$/, _T/binary>>) -> false;
 valid_path(<<_Char, T/binary>>) -> valid_path(T).
 
-new_paste_id() ->
-  Initial = rand:uniform(62) - 1,
-  new_paste_id(<<Initial>>, 7).
-new_paste_id(Bin, 0) ->
-  Chars = <<"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890">>,
-  << <<(binary_part(Chars, B, 1))/binary>> || <<B>> <= Bin >>;
-new_paste_id(Bin, Rem) ->
-  Next = rand:uniform(62) - 1,
-  new_paste_id(<<Bin/binary, Next>>, Rem - 1).
+%new_paste_id() ->
+%  Initial = rand:uniform(62) - 1,
+%  new_paste_id(<<Initial>>, 7).
+%new_paste_id(Bin, 0) ->
+%  Chars = <<"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890">>,
+%  << <<(binary_part(Chars, B, 1))/binary>> || <<B>> <= Bin >>;
+%new_paste_id(Bin, Rem) ->
+%  Next = rand:uniform(62) - 1,
+%  new_paste_id(<<Bin/binary, Next>>, Rem - 1).
 
 %format_html(Paste, plain) ->
 %  Text = escape_html_chars(read_file(Paste)),

@@ -25,7 +25,10 @@ points() -> cowboy_router:compile([{'_', [
     {"/multipart/[...]",  n2o_multipart, []},
     %{"/rest/:resource",     rest_cowboy, []},
     %{"/rest/:resource/:id", rest_cowboy, []},
-    {"/resttest/[:resource]",     testrest, []},
+    {"/",                           testrest, []},
+    {"/resttest/[:resource]",       testrest, []},
     {"/resttest/[:resource]/[:id]", testrest, []},
     {"/ws/[...]",           n2o_stream,  []},
     {'_',                   n2o_cowboy,  []} ]}]).
+
+
