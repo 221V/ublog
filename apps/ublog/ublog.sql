@@ -77,11 +77,22 @@ CREATE TABLE "u_tags" (
   "name" varchar(255) NOT NULL,
   "status" smallint NOT NULL DEFAULT 1,
   --show: 1, hide: 2, deleted: 3
+  "posts_count" bigint NOT NULL DEFAULT 0,
   "inserted_at" TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP(0),
   "updated_at" TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP(0),
   PRIMARY KEY ("id")
 );
 -- maybe move tag's translations from erlang to postgresql (when will be really many tags) ?
+INSERT INTO "u_tags" (author_id, name) VALUES (1, 'programming');
+INSERT INTO "u_tags" (author_id, name) VALUES (1, 'books');
+INSERT INTO "u_tags" (author_id, name) VALUES (1, 'erlang');
+INSERT INTO "u_tags" (author_id, name) VALUES (1, 'js');
+INSERT INTO "u_tags" (author_id, name) VALUES (1, 'n2o');
+INSERT INTO "u_tags" (author_id, name) VALUES (1, 'postgresql');
+INSERT INTO "u_tags" (author_id, name) VALUES (1, 'php');
+INSERT INTO "u_tags" (author_id, name) VALUES (1, 'games');
+INSERT INTO "u_tags" (author_id, name) VALUES (1, 'philosophy');
+INSERT INTO "u_tags" (author_id, name) VALUES (1, 'psychology');
 
 
 DROP TABLE IF EXISTS u_votes;

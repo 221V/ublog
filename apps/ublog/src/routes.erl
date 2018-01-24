@@ -19,8 +19,13 @@ route_prefix(<<"/ws/",P/binary>>) -> route(P);
 route_prefix(<<"/",P/binary>>) -> route(P);
 route_prefix(P) -> route(P).
 
-route(<<>>)              -> login;
-route(<<"testcities/">>) -> testcities;
-route(<<"index",_/binary>>) -> index;
-route(<<"login",_/binary>>) -> login;
-route(_) -> login.
+%route(<<>>)              -> login;
+%route(<<"testcities/">>) -> testcities;
+%route(<<"index",_/binary>>) -> index;
+route(<<"login/">>) -> login;
+route(<<"profile/">>) -> profile;
+route(<<"profile/posts/">>) -> profile_posts;
+route(<<"profile/posts/add/">>) -> add_post;
+route(<<"profile/posts/edit/">>) -> edit_post;
+route(_) -> redirect_to_main.
+

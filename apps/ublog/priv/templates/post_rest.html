@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{{title}}</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="/css/prettify.css">
+<link rel="stylesheet" type="text/css" href="/css/ublog.css">
+</head>
+<body>
+<div class="row cont">
+{{header}}
+
+<div class="row middle">
+  <div class="column left">
+  {{tags_cloud}}
+  </div>
+  <div class="column right">
+  {{post}}
+  </div>
+
+</div>
+
+<script defer="defer" src="/js/for_post_pages.js"></script>
+<script>
+var gpr = document.createElement('script');
+gpr.src = "/js/prettify.js";
+document.body.appendChild(gpr);
+gpr.addEventListener("load", function(){
+  PR.prettyPrint();
+});
+</script>
+
+<div class="footer">
+<span>2015-2018 &copy;</span>
+</div>
+
+</div>
+</body>
+</html>

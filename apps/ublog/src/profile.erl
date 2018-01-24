@@ -1,0 +1,34 @@
+-module(profile).
+-compile([export_all, nowarn_export_all]).
+-include_lib("nitro/include/nitro.hrl").
+-include_lib("n2o/include/wf.hrl").
+
+main() -> #dtl{file="null",app=ublog,bindings=[]}.
+
+
+event(init) ->
+  Nickname = wf:user(),
+  case Nickname of
+    undefined -> wf:redirect("/login/");
+    _ ->
+      io:format("session resource: ~tp ~tp ~n",[wf:user(), wf:session(uid)]),
+      
+      wf:wire("document.title='Profile';"),
+      wf:wire("var load_js=document.createElement('script');load_js.setAttribute('defer', 'defer');load_js.setAttribute('src', '/js/user_profile.js');document.body.appendChild(load_js);"),
+      Uid = wf:session(uid),
+      Mpid = pg:mypg(),
+      [{Posts_Count}] = pq:get_user_posts_count(Mpid, Uid),
+      epgsql:close(Mpid),
+      P_Menu_HTML = hg:generate_user_profile_menu(Uid, Nickname, Posts_Count),
+      
+      wf:wire(wf:f("var div=document.createElement('div');div.className='row cont';div.innerHTML='~s';"
+               "document.body.appendChild(div);", [unicode:characters_to_binary(P_Menu_HTML,utf8)]))
+  end;
+
+
+event({client,{logout}}) ->
+  wf:logout(),
+  wf:redirect("/");
+
+
+event(_) -> [].

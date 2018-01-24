@@ -1,51 +1,30 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <meta name='viewport' content='initial-scale=0.5'>
-        <link href='/static/synrc.css' type='text/css' rel='stylesheet'>
-        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-        <title>Login</title>
-    </head>
-    <body>
-
-        <table cellpadding='20' align='center'>
-            <tr>
-                <td valign='top' align='center' height='230' width='300'>
-                    <a href="/doc"><img src='/static/S.svg' border='0' height='200' style='margin-top:0px;'></a><br>
-                </td>
-                <td colspan='2' width='700' valign='top'>
-                    <h1><b>N2O</b></h1>
-                    <h2>Simple Review Application</h2>
-                </td>
-            </tr>
-            <tr>
-                <td width='300' valign='top'>
-                    <p>List of spawned feeds:</p>
-                    <div id='history' class='feed'></div><br><br>
-                    <p>List of inhabited realms:</p>
-                    <div class='feed'>
-                        {{folders}}
-                    </div>
-                </td>
-                <td colspan='2' width='700' valign='top' height='550' bgcolor='#eeeeee'>
-                    <h1>Anyname Login</h1>
-                    {{body}}
-                </td>
-            </tr>
-        </table>
-    <script>{{script}}</script>
-    <script src="/js/n2o/protocols/bert.js" defer></script>
-    <script src="/js/n2o/protocols/client.js" defer></script>
-    <script src="/js/n2o/protocols/nitrogen.js" defer></script>
-    <script src="/js/n2o/bullet.js" defer></script>
-    <script src="/js/n2o/xhr.js" defer></script>
-    <script src="/js/n2o/utf8.js" defer></script>
-    <script src="/js/n2o/template.js" defer></script>
-    <script src="/js/n2o/n2o.js" defer></script>
-    <script src="/js/n2o/validation.js" defer></script>
-    <script>
-    window.addEventListener("load", function load(e0){
-      protos = [$client,$bert]; N2O_start();
-    },false);
-    </script>
-    </body>
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+</head>
+<body>
+  <input id="login" type="text" placeholder="login"><br>
+  <input id="pass" type="password" placeholder="pass"><br>
+  <button id="do_login">Go !</button>
+  
+  <script>{{script}}</script>
+  <script src="/js/n2o/protocols/bert.js" defer></script>
+  <script src="/js/n2o/protocols/client.js" defer></script>
+  <script src="/js/n2o/protocols/nitrogen.js" defer></script>
+  <script src="/js/n2o/bullet.js" defer></script>
+  <script src="/js/n2o/xhr.js" defer></script>
+  <script src="/js/n2o/utf8.js" defer></script>
+  <script src="/js/n2o/template.js" defer></script>
+  <script src="/js/n2o/n2o.js" defer></script>
+  <script src="/js/n2o/validation.js" defer></script>
+  <script>
+  window.addEventListener("load", function load(e0){
+    protos = [$client,$bert]; N2O_start();
+  },false);
+  </script>
+  
+  <script src="/js/user_profile.js" defer></script>
+</body>
 </html>
