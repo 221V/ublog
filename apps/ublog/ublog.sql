@@ -93,6 +93,9 @@ INSERT INTO "u_tags" (author_id, name) VALUES (1, 'php');
 INSERT INTO "u_tags" (author_id, name) VALUES (1, 'games');
 INSERT INTO "u_tags" (author_id, name) VALUES (1, 'philosophy');
 INSERT INTO "u_tags" (author_id, name) VALUES (1, 'psychology');
+INSERT INTO "u_tags" (author_id, name) VALUES (1, 'other');
+INSERT INTO "u_tags" (author_id, name) VALUES (1, 'notes');
+INSERT INTO "u_tags" (author_id, name) VALUES (1, 'linux');
 
 
 DROP TABLE IF EXISTS u_votes;
