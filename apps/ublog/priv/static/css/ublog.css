@@ -228,3 +228,31 @@ button.pagination{
   border-collapse: unset;
   white-space: pre-wrap;
 }
+p.user_profile_menu{
+z-index: 300;
+position: relative;
+}
+
+.post_body blockquote{
+  background: #f2f9f5;
+  border-left: 10px solid #d9ede1;
+  margin: 5px 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+.post_body blockquote:before,
+.post_body blockquote:after{
+  color: #ccc;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+.post_body blockquote:before{
+  content: open-quote;
+}
+.post_body blockquote:after{
+  content: close-quote;
+  margin-top: 0.45em;
+  display: inline-block;
+}
