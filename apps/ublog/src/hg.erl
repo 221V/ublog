@@ -187,7 +187,7 @@ generate_pagination(tags, Active_Page, Max_Page, Tag_Id) ->
   case Count_To_First of
     true ->
        Pages_First = [<<"<a href=\"/tag/">>, Tag_Id, <<"/page/1\"><button class=\"pagination likegoog paginationbtn\">&#xab;</button></a><a href=\"/tag/">>, Tag_Id, <<"/page/1\"><button class=\"pagination likegoog paginationbtn\">&#x2190;</button></a>">>],
-       P_1 = <<"<a href=\"/tag/">>, Tag_Id, <<"/page/1\"><button class=\"pagination likegoog paginationbtn\">1</button></a>">>;
+       P_1 = [ <<"<a href=\"/tag/">>, Tag_Id, <<"/page/1\"><button class=\"pagination likegoog paginationbtn\">1</button></a>">> ];
     false ->
       Pages_First = [<<"<a href=\"/tag/">>, Tag_Id, <<"/page/1\"><button class=\"pagination likegoog paginationbtn\">&#xab;</button></a><a href=\"/tag/">>, Tag_Id, <<"/page/">>, erlang:integer_to_binary(Active_Page - 1), <<"\"><button class=\"pagination likegoog paginationbtn\">&#x2190;</button></a>">>],
       P_1 = [<<"<a href=\"/tag/">>, Tag_Id, <<"/page/">>, erlang:integer_to_binary(Active_Page - 2), <<"\"><button class=\"pagination likegoog paginationbtn\">">>, erlang:integer_to_binary(Active_Page - 2), <<"</button></a><a href=\"/tag/">>, Tag_Id, <<"/page/">>, erlang:integer_to_binary(Active_Page - 1), <<"\"><button class=\"pagination likegoog paginationbtn\">">>, erlang:integer_to_binary(Active_Page - 1), <<"</button></a>">>]
