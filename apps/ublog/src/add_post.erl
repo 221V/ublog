@@ -22,10 +22,8 @@ event(init) ->
       wf:wire("var load_css2=document.createElement('link');load_css2.setAttribute('rel', 'stylesheet');load_css2.setAttribute('type', 'text/css');load_css2.setAttribute('href', '/css/mybbcodes.css');document.body.appendChild(load_css2);"),
       
       Uid = wf:session(uid),
-      Mpid = pg:mypg(),
-      [{Posts_Count}] = pq:get_user_posts_count(Mpid, Uid),
-      Tags_Data = pq:get_tags_orderby_countposts(Mpid),
-      epgsql:close(Mpid),
+      [{Posts_Count}] = pq:get_user_posts_count(Uid),
+      Tags_Data = pq:get_tags_orderby_countposts(),
       P_Menu_HTML = hg:generate_user_profile_menu(Uid, Nickname, Posts_Count),
       P_Form_HTML = hg:generate_user_addpost_form(),
       P_Tags_HTML = hg:generate_user_tags_formpart(Tags_Data, []),
@@ -70,20 +68,18 @@ event({client,{post, Title, BB_Preview_Post, BB_Post, Tags}}) ->
           %  "window.send_wait=false;",[unicode:characters_to_binary(BB_Preview_Post3,utf8), unicode:characters_to_binary(BB_Post3,utf8)]));
           
           Tags2V = hm:tags_to_values(Tags2,""),
-          Mpid = pg:mypg(),
-          [{Tags2Count}] = pq:get_count_tags_in(Mpid, Tags2V),
+          [{Tags2Count}] = pq:get_count_tags_in(Tags2V),
           if Tags2Count >= 2 ->
               Tags3 = [ erlang:list_to_integer(TX) || TX <- string:split(Tags2V, ",", all)],
               Title3 = hm:htmlspecialchars(hm:trim_l(Title)),
               UId = wf:session(uid),
-              [{PId}] = pq:insert_post(Mpid, UId, Title3, unicode:characters_to_binary(BB_Preview_Post1,utf8), unicode:characters_to_binary(BB_Preview_Post3,utf8), unicode:characters_to_binary(BB_Post1,utf8), unicode:characters_to_binary(BB_Post3,utf8), Tags3),
-              pq:update_countposts_tags_in(Mpid, Tags2V),
+              [{PId}] = pq:insert_post(UId, Title3, unicode:characters_to_binary(BB_Preview_Post1,utf8), unicode:characters_to_binary(BB_Preview_Post3,utf8), unicode:characters_to_binary(BB_Post1,utf8), unicode:characters_to_binary(BB_Post3,utf8), Tags3),
+              pq:update_countposts_tags_in(Tags2V),
               
               %wf:redirect("/post/" ++ erlang:integer_to_list(PId));
               wf:wire("window.send_wait=false;alert('ok !');");
             true -> wf:wire("window.send_wait=false;alert('invalid tags !');")
-          end,
-          epgsql:close(Mpid);
+          end;
         _ ->
           wf:wire("window.send_wait=false;alert('invalid data !');")
       end

@@ -47,27 +47,24 @@ paste_html(Req, Page_Num) ->
     true ->
       
       Limit_On_Page = 10,
-      Mpid = pg:mypg(),
-      [{All_Posts_Count}] = pq:get_all_posts_count(Mpid),
-      
+      [{All_Posts_Count}] = pq:get_all_posts_count(),
       Page_Valid2 = (All_Posts_Count > (Page_Num2 - 1) * Limit_On_Page),
       case Page_Valid2 of
         true ->
           
           Offset = (Page_Num2 - 1) * Limit_On_Page,
-          Posts_Data = pq:get_posts_by_page(Mpid, Limit_On_Page, Offset),
-          Posts_Html = hg:generate_page_posts(Mpid,Posts_Data,[]),
+          Posts_Data = pq:get_posts_by_page(Limit_On_Page, Offset),
+          Posts_Html = hg:generate_page_posts(Posts_Data,[]),
           
           Header = case hm:get_session_value(<<"user">>,Req) of
             undefined -> <<"<div class=\"header\"><a href=\"/page/1\" title=\"Main\"><span>ublog</span></a></div>">>;
             Nickname ->
               Uid = hm:get_session_value(uid,Req),
-              [{Posts_Count}] = pq:get_user_posts_count(Mpid, Uid),
+              [{Posts_Count}] = pq:get_user_posts_count(Uid),
               hg:generate_user_profile_menu(Uid, Nickname, Posts_Count)
           end,
-          All_Tags = pq:get_tags_orderby_countposts(Mpid),
+          All_Tags = pq:get_tags_orderby_countposts(),
           All_Tags2 = hg:generate_tags_cloud(All_Tags,[]),
-          epgsql:close(Mpid),
           
           Max_Page = erlang:ceil(All_Posts_Count/Limit_On_Page),
           Pagination_Html = hg:generate_pagination(main, Page_Num2, Max_Page, []),
@@ -75,7 +72,6 @@ paste_html(Req, Page_Num) ->
           {ok, Html} = main_rest_view:render([ {title, <<"ublog">>}, {header, Header}, {tags_cloud, All_Tags2}, {posts, Posts_Html}, {pagination, Pagination_Html} ]),
           {Html, Req, []};
         _ ->
-          epgsql:close(Mpid),
           cowboy_req:reply(303, [{<<"location">>, <<"/page/1">>}], Req),
           {shutdown, Req, []}
       end;

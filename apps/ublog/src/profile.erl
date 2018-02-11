@@ -16,9 +16,7 @@ event(init) ->
       wf:wire("document.title='Profile';"),
       wf:wire("var load_js=document.createElement('script');load_js.setAttribute('defer', 'defer');load_js.setAttribute('src', '/js/user_profile.js');document.body.appendChild(load_js);"),
       Uid = wf:session(uid),
-      Mpid = pg:mypg(),
-      [{Posts_Count}] = pq:get_user_posts_count(Mpid, Uid),
-      epgsql:close(Mpid),
+      [{Posts_Count}] = pq:get_user_posts_count(Uid),
       P_Menu_HTML = hg:generate_user_profile_menu(Uid, Nickname, Posts_Count),
       
       wf:wire(wf:f("var div=document.createElement('div');div.className='row cont';div.innerHTML='~s';"

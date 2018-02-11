@@ -25,9 +25,7 @@ event(init) ->
 
 
 event({client,{sitiesshow}}) ->
-  Mpid = pg:mypg(),
-  Data = pq:get_all_cities(Mpid),
-  epgsql:close(Mpid),
+  Data = pq:get_all_cities(),
   
   InnerHtml = hg:generate_cities_list(Data),
   
@@ -39,9 +37,7 @@ event({client,{sitiesshow}}) ->
 
 event({client,{cityadd, Name, Pop}}) ->
   %io:format("~p~n~p~n",[Name, Pop]),
-  Mpid = pg:mypg(),
-  1 = pq:add_city(Mpid, Name, Pop),
-  epgsql:close(Mpid),
+  1 = pq:add_city(Name, Pop),
   
   wf:wire(wf:f("qi('cityname').value='';"
           "qi('citypop').value='1';"

@@ -22,8 +22,7 @@ event({client,{login, Login, Pass}}) ->
     true ->
       
       Email2 = hm:trim_l(Login),
-      Mpid = pg:mypg(),
-      case pq:get_user_login(Mpid, Email2) of
+      case pq:get_user_login(Email2) of
         [{_, _, _, 3}] -> wf:wire("window.login_wait=false;alert('account deleted !');");
         [{_, _, _, 2}] -> wf:wire("window.login_wait=false;alert('account banned !');");
         [{Uid, Nickname, Password, 1}] ->
@@ -39,8 +38,7 @@ event({client,{login, Login, Pass}}) ->
           end;
         [] -> wf:wire("window.login_wait=false;alert('invalid login and/or password !');");
         _ -> wf:wire("window.login_wait=false;alert('db error !');")
-      end,
-      epgsql:close(Mpid);
+      end;
     _ ->
       wf:wire("window.login_wait=false;alert('invalid login and/or password !');")
   end;

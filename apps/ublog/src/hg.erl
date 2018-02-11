@@ -12,7 +12,7 @@
 % generate_tags_url_list(Data,Acc)
 % generate_tags_cloud(Data,Acc)
 % generate_full_post(Title, Tags3, Html_Post, Inserted_At)
-% generate_page_posts(Mpid, Data, Acc)
+% generate_page_posts(Data, Acc)
 % generate_pagination(main|tags, Active_Page, Max_Page, Params)
 % 
 
@@ -74,15 +74,15 @@ generate_full_post(Title, Tags3, Html_Post, Inserted_At) ->
   [ <<"<div class=\"post\"><p class=\"title\">">>, Title, <<"</p><p class=\"tags\">">>, Tags, <<"</p><div class=\"post_body\">">>, Html_Post, <<"</div><span class=\"post_date\">">>, Datetime, <<"</span></div>">> ].
 
 
-%generate_page_posts(Mpid, Data, Acc)
-generate_page_posts(_, [], Acc) -> lists:reverse(Acc);
-generate_page_posts(Mpid, [{Id, _Author_Id, Title, _, Html_Preview_Post, _, _, Tags1, Inserted_At}|T],Acc2) ->
+%generate_page_posts(Data, Acc)
+generate_page_posts([], Acc) -> lists:reverse(Acc);
+generate_page_posts([{Id, _Author_Id, Title, _, Html_Preview_Post, _, _, Tags1, Inserted_At}|T],Acc2) ->
   Tags2 = lists:foldl(fun(X,"") -> erlang:integer_to_list(X);(X,Acc) -> erlang:integer_to_list(X) ++ "," ++ Acc end, "", Tags1),
-  Tags3 = pq:get_value_tags_in(Mpid, Tags2),
+  Tags3 = pq:get_value_tags_in(Tags2),
   Tags = ?MODULE:generate_tags_url_list(Tags3,[]),
   Datetime = hm:timestamp2binary(Inserted_At),
   Z = [ <<"<div class=\"post\"><p class=\"title\"><a class=\"read_full_post_title\" href=\"/post/">>, erlang:integer_to_binary(Id), <<"\" target=\"_blank\">">>, Title, <<"</a></p><p class=\"tags\">">>, Tags, <<"</p><div class=\"post_body\">">>, Html_Preview_Post, <<"</div><span class=\"post_date\">">>, Datetime, <<"</span><a class=\"read_full_post\" href=\"/post/">>, erlang:integer_to_binary(Id), <<"\" target=\"_blank\"><span>[ Read full post ]</span></a></div>">> ],
-  ?MODULE:generate_page_posts(Mpid, T, [Z|Acc2]).
+  ?MODULE:generate_page_posts(T, [Z|Acc2]).
 
 
 %generate_pagination(main, Active_Page, Max_Page, Params)

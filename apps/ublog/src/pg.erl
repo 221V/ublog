@@ -1,38 +1,74 @@
 -module(pg).
+-behaviour(gen_server).
 -compile([export_all, nowarn_export_all]).
 
 
-mypg() ->
-  %{ok, C} = epgsql:connect("localhost", "user", "pass", [{database, "test"}, {port, 5432}, {timeout, 2000}]),
-  Conn = epgsql:connect("localhost", "user", "pass", [{database, "test"}, {port, 6432}, {timeout, 3000}]),
-  case Conn of
-    {ok, C} ->
-      C;
-    {error, M} ->
-      io:format("Database error: ~p~n", [epgsql_errcodes:to_name(M)]),
-      wf:wire(["alert('db conn error!');"]),
-      %{error, M}
-      error
+start_pool() ->
+  timer:sleep(1000),
+  Params = #{host => "localhost",
+    port => 6432,
+    username => "user",
+    password => "pass",
+    database => "test"},
+  
+  %io:format("~p~n",["789004"]),
+  case epgsql_pool:start(my_main_pool, 10, 50, Params) of
+    {ok, _} ->
+      io:format("~p~n",["pg_pool start !!"]),
+      ok;
+    Z ->
+      %io:format("~p~n",["789002"]),
+      io:format("Pool start err: ~p~n~p~n", ["err db connect", Z]),
+      err
   end.
 
 
-transaction(Mpid, Fun) ->
-  case epgsql:squery(Mpid, "BEGIN") of
-    {ok, _, _} ->
-      try
-        Result = Fun(),
-        epgsql:squery(Mpid, "COMMIT"),
-        Result
-      catch
-        Err1:Err2 ->
-          epgsql:squery(Mpid, "ROLLBACK"),
-          {Err1, Err2}
-      end;
-    Error -> Error
+start_link() ->
+  gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+
+
+init(_) ->
+  %timer:sleep(3000),
+  %io:format("~p~n",[?MODULE:start_pool()]),
+  %?MODULE:start_pool(),
+  %io:format("~p~n",["789000"]),
+  erlang:spawn(?MODULE, start_pool, []),
+  {ok, []}.
+
+
+handle_call(_Req, _From, State) ->
+  {reply, not_handled, State}.
+
+
+handle_cast(_Req, State) ->
+  {noreply, State}.
+
+
+handle_info(_Req, State) ->
+  {noreply, State}.
+
+
+terminate(Reason, _State) ->
+  io:format("Pool ~p terminating: ~p~n", [?MODULE, Reason]),
+  ok.
+
+
+code_change(_OldVsn, State, _Extra) -> 
+  {ok, State}.
+
+
+transaction(Fun) ->
+  case epgsql_pool:transaction(my_main_pool, Fun) of
+    {ok, _} ->
+      ok;
+    Error ->
+      io:format("transaction error: ~p~n in tr fun: ~p~n", [Error, Fun]),
+      Error
   end.
 
-select(Mpid,Q,A) ->
-  case epgsql:equery(Mpid, Q, A) of
+
+select(Q,A) ->
+  case epgsql_pool:query(my_main_pool, Q, A) of
     {ok,_,R} ->
       R;
     {error,E} ->
@@ -41,8 +77,8 @@ select(Mpid,Q,A) ->
   end.
 
 
-in_up_del(Mpid,Q,A) ->
-  case epgsql:equery(Mpid, Q, A) of
+in_up_del(Q,A) ->
+  case epgsql_pool:query(my_main_pool, Q, A) of
     {ok,R} ->
       R;
     {error,E} ->
@@ -51,8 +87,8 @@ in_up_del(Mpid,Q,A) ->
   end.
 
 
-returning(Mpid,Q,A) ->
-  case epgsql:equery(Mpid, Q, A) of
+returning(Q,A) ->
+  case epgsql_pool:query(my_main_pool, Q, A) of
     {ok,1,_,R} ->
       R;
     {error,E} ->

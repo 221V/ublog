@@ -63,23 +63,21 @@ paste_html(Req, Post_Id) ->
   %{ok, Html} = testrest_view:render([ {title, <<"example">>}, {text, Post_Id} ]),
   %{Html, Req, []}.
   
-  Mpid = pg:mypg(),
-  case pq:get_post_by_id(Mpid, erlang:binary_to_integer(Post_Id)) of
+  case pq:get_post_by_id(erlang:binary_to_integer(Post_Id)) of
     [{_Author_Id, Title, _, _, _, Html_Post, Tags, Inserted_At}] ->
       %io:format("post tags: ~tp ~n",[Tags]), % [3,1]
       Tags2 = lists:foldl(fun(X,"") -> erlang:integer_to_list(X);(X,Acc) -> erlang:integer_to_list(X) ++ "," ++ Acc end, "", Tags),
-      Tags3 = pq:get_value_tags_in(Mpid, Tags2),
+      Tags3 = pq:get_value_tags_in(Tags2),
       
       Header = case hm:get_session_value(<<"user">>,Req) of
         undefined -> <<"<div class=\"header\"><a href=\"/page/1\" title=\"Main\"><span>ublog</span></a></div>">>;
         Nickname ->
           Uid = hm:get_session_value(uid,Req),
-          [{Posts_Count}] = pq:get_user_posts_count(Mpid, Uid),
+          [{Posts_Count}] = pq:get_user_posts_count(Uid),
           hg:generate_user_profile_menu(Uid, Nickname, Posts_Count)
       end,
-      All_Tags = pq:get_tags_orderby_countposts(Mpid),
+      All_Tags = pq:get_tags_orderby_countposts(),
       All_Tags2 = hg:generate_tags_cloud(All_Tags,[]),
-      epgsql:close(Mpid),
       
       Post = hg:generate_full_post(Title, Tags3, Html_Post, Inserted_At),
       {ok, Html} = post_rest_view:render([ {title, Title}, {header, Header}, {tags_cloud, All_Tags2}, {post, Post} ]),
@@ -87,11 +85,9 @@ paste_html(Req, Post_Id) ->
       {Html, Req, []};
     [] ->
       % post not found -- redirect to main
-      epgsql:close(Mpid),
       {ok, Req2} = cowboy_req:reply(303, [{<<"location">>, <<"/">>}], Req),
       {<<"">>, Req2, []};
     _ ->
-      epgsql:close(Mpid),
       {<<"<p>database error</p>">>, Req, []}
   end.
 

@@ -19,14 +19,13 @@ event(init) ->
           wf:wire("alert('invalid post id !!');");
         Post_Id ->
           Post_Id2 = erlang:binary_to_integer(Post_Id),
-          Mpid = pg:mypg(),
-          case pq:get_post_by_id(Mpid, Post_Id2) of
+          case pq:get_post_by_id(Post_Id2) of
             [{Author_Id, Title, BB_Preview_Post, _, BB_Post, _, Tags, _}] ->
               Uid = wf:session(uid),
               if Uid =:= Author_Id ->
                   
-                  [{Posts_Count}] = pq:get_user_posts_count(Mpid, Uid),
-                  Tags_Data = pq:get_tags_orderby_countposts(Mpid),
+                  [{Posts_Count}] = pq:get_user_posts_count(Uid),
+                  Tags_Data = pq:get_tags_orderby_countposts(),
                   P_Menu_HTML = hg:generate_user_profile_menu(Uid, Nickname, Posts_Count),
                   P_Form_HTML = hg:generate_user_editpost_form(Title, BB_Preview_Post, BB_Post),
                   P_Tags_HTML = hg:generate_user_tags_formpart(Tags_Data, []),
@@ -57,8 +56,7 @@ event(init) ->
               end;
             [] -> wf:wire("alert('invalid post id !!');");
             _ -> wf:wire("alert('database error !!');")
-          end,
-          epgsql:close(Mpid)
+          end
       end
   end;
 
@@ -75,9 +73,8 @@ event({client,{post, Title, BB_Preview_Post, BB_Post, Tags}}) ->
           wf:wire("alert('invalid post id !!');");
         Post_Id ->
           Post_Id2 = erlang:binary_to_integer(Post_Id),
-          Mpid = pg:mypg(),
           
-          case pq:get_post_by_id(Mpid, Post_Id2) of
+          case pq:get_post_by_id(Post_Id2) of
             [{Author_Id, _, _, _, _, _, _, _}] ->
               Uid = wf:session(uid),
               if Uid =:= Author_Id ->
@@ -104,14 +101,14 @@ event({client,{post, Title, BB_Preview_Post, BB_Post, Tags}}) ->
                       io:format("~tp~n",[BB_Post2]),
                       
                       Tags2V = hm:tags_to_values(Tags2,""),
-                      [{Tags2Count}] = pq:get_count_tags_in(Mpid, Tags2V),
+                      [{Tags2Count}] = pq:get_count_tags_in(Tags2V),
                       
                       if Tags2Count >= 2 ->
                           Tags3 = [ erlang:list_to_integer(TX) || TX <- string:split(Tags2V, ",", all)],
                           Title3 = hm:htmlspecialchars(hm:trim_l(Title)),
                           UId = wf:session(uid),
                           
-                          1 = pq:update_post(Mpid, Post_Id2, Title3, unicode:characters_to_binary(BB_Preview_Post1,utf8), unicode:characters_to_binary(BB_Preview_Post3,utf8), unicode:characters_to_binary(BB_Post1,utf8), unicode:characters_to_binary(BB_Post3,utf8), Tags3),
+                          1 = pq:update_post(Post_Id2, Title3, unicode:characters_to_binary(BB_Preview_Post1,utf8), unicode:characters_to_binary(BB_Preview_Post3,utf8), unicode:characters_to_binary(BB_Post1,utf8), unicode:characters_to_binary(BB_Post3,utf8), Tags3),
                           
                           %wf:redirect("/post/" ++ erlang:integer_to_list(Post_Id2));
                           wf:wire("window.send_wait=false;alert('updated !!');");
@@ -123,8 +120,7 @@ event({client,{post, Title, BB_Preview_Post, BB_Post, Tags}}) ->
               end;
             [] -> wf:wire("alert('invalid post id !!');");
             _ -> wf:wire("alert('database error !!');")
-          end,
-          epgsql:close(Mpid)
+          end
       end
   end;
 

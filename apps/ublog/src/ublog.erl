@@ -5,12 +5,21 @@
 
 main(A)    -> mad:main(A).
 start()    -> start(normal,[]).
-start(_,_) -> supervisor:start_link({local,ublog},ublog,[]).
+start(_,_) ->
+  %application:start(ssl),
+  supervisor:start_link({local,ublog},ublog,[]).
+
 stop(_)    -> ok.
 
-
 init([]) ->
-            {ok, {{one_for_one, 5, 10}, [spec()]}}.
+  {ok, {{one_for_one, 5, 10},
+        [spec(),
+         #{id => pg_pool_1,
+           start => {pg, start_link, []},
+           restart => permanent,
+           type => worker,
+           modules => [pg] }
+        ]}}.
 
 spec()   -> ranch:child_spec(http, 100, ranch_tcp, port(), cowboy_protocol, env()).
 env()    -> [ { env, [ { dispatch, points() } ] } ].
