@@ -20,6 +20,7 @@ Includes
 * otp.mk ( github.com/synrc/otp.mk )
 * erlydtl ( github.com/evanmiller/erlydtl )
 * epgsql ( github.com/epgsql/epgsql )
+* epgsql_pool ( github.com/wgnet/epgsql_pool )
 * vanilla.js ( vanilla-js.com )
 
 Run
