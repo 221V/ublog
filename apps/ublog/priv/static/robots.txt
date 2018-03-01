@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://blog.clever-games.win/sitemap.xml

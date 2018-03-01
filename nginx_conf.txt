@@ -125,7 +125,7 @@ server{
     ##try_files $uri $uri/ @php;
     #try_files $uri $uri/ /index.php?$request_uri;
     ##try_files @php @php;
-    try_files @notphp @notphp;
+    try_files $uri @notphp @notphp;
   }
   location = /index.php {
     #try_files @php @php;
