@@ -57,12 +57,11 @@ event({client,{post, Title, BB_Preview_Post, BB_Post, Tags}}) ->
       
       case (((Valid_Title and Valid_Preview) and Valid_Post) and (Valid_Tags1 and Valid_Tags2)) of
         true ->
+          
           BB_Preview_Post1 = hm:htmlspecialchars(BB_Preview_Post),
-          {ok, BB_Preview_Post2, _} = bbcodeslex:string(unicode:characters_to_list(BB_Preview_Post1,utf8)),
-          BB_Preview_Post3 = hm:leex_parser(BB_Preview_Post2,[]),
           BB_Post1 = hm:htmlspecialchars(BB_Post),
-          {ok, BB_Post2, _} = bbcodeslex:string(unicode:characters_to_list(BB_Post1,utf8)),
-          BB_Post3 = hm:leex_parser(BB_Post2,[]),
+          BB_Preview_Post3 = bb2html:bb_parser(BB_Preview_Post),
+          BB_Post3 = bb2html:bb_parser(BB_Post),
           
           %wf:wire(wf:f("qi('result_preview_post').innerHTML=`~s`;qi('result_post').innerHTML=`~s`;"
           %  "window.send_wait=false;",[unicode:characters_to_binary(BB_Preview_Post3,utf8), unicode:characters_to_binary(BB_Post3,utf8)]));

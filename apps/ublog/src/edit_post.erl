@@ -92,13 +92,12 @@ event({client,{post, Title, BB_Preview_Post, BB_Post, Tags}}) ->
                     true ->
                       
                       BB_Preview_Post1 = hm:htmlspecialchars(BB_Preview_Post),
-                      {ok, BB_Preview_Post2, _} = bbcodeslex:string(unicode:characters_to_list(BB_Preview_Post1,utf8)),
-                      BB_Preview_Post3 = hm:leex_parser(BB_Preview_Post2,[]),
                       BB_Post1 = hm:htmlspecialchars(BB_Post),
-                      {ok, BB_Post2, _} = bbcodeslex:string(unicode:characters_to_list(BB_Post1,utf8)),
-                      BB_Post3 = hm:leex_parser(BB_Post2,[]),
+                      BB_Preview_Post3 = bb2html:bb_parser(BB_Preview_Post),
+                      BB_Post3 = bb2html:bb_parser(BB_Post),
                       
-                      io:format("~tp~n",[BB_Post2]),
+                      %io:format("~tp~n",[BB_Preview_Post3]),
+                      %io:format("~tp~n",[BB_Post3]),
                       
                       Tags2V = hm:tags_to_values(Tags2,""),
                       [{Tags2Count}] = pq:get_count_tags_in(Tags2V),
