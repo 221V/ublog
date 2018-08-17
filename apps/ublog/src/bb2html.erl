@@ -707,8 +707,7 @@ bb_convert([{url, close}|T], Acc) ->
   ?MODULE:bb_convert(T, [ <<"</a>">> |Acc]);
 
 bb_convert([{url, open, Params}|T], Acc) ->
-  [_H|Params2] = Params,
-  Z = [ <<"<a href=\"">>, lists:reverse(Params2), <<"\" target=\"_blank\">">> ],
+  Z = [ <<"<a href=\"">>, lists:reverse(Params), <<"\" target=\"_blank\">">> ],
   ?MODULE:bb_convert(T, [ Z |Acc]);
 
 bb_convert([{youtube_url, Params}|T], Acc) ->
