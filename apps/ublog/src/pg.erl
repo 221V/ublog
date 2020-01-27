@@ -6,18 +6,17 @@
 start_pool() ->
   timer:sleep(1000),
   Params = #{host => "localhost",
-    port => 6432,
+    %port => 6432,
+    port => 5432,
     username => "user",
     password => "pass",
     database => "test"},
   
-  %io:format("~p~n",["789004"]),
   case epgsql_pool:start(my_main_pool, 10, 50, Params) of
     {ok, _} ->
       io:format("~p~n",["pg_pool start !!"]),
       ok;
     Z ->
-      %io:format("~p~n",["789002"]),
       io:format("Pool start err: ~p~n~p~n", ["err db connect", Z]),
       err
   end.
@@ -31,7 +30,6 @@ init(_) ->
   %timer:sleep(3000),
   %io:format("~p~n",[?MODULE:start_pool()]),
   %?MODULE:start_pool(),
-  %io:format("~p~n",["789000"]),
   erlang:spawn(?MODULE, start_pool, []),
   {ok, []}.
 
