@@ -29,6 +29,9 @@ bb_scan("[code]" ++ T, Acc_Tree, Active_BB_Element, Active_Text) when Active_BB_
 bb_scan("[/code]" ++ T, Acc_Tree, Active_BB_Element, Active_Text) when Active_BB_Element =/= quote ->
   ?MODULE:bb_scan(T, [{code, close}, {text, Active_Text} |Acc_Tree], text, "");
 
+bb_scan("\\\\" ++ T, Acc_Tree, Active_BB_Element, Active_Text) when Active_BB_Element =:= code ->
+  ?MODULE:bb_scan(T, Acc_Tree, Active_BB_Element, "\\" ++ Active_Text); %" fix doubled backslash to single
+
 bb_scan("[quote]" ++ T, Acc_Tree, Active_BB_Element, Active_Text) when Active_BB_Element =/= code ->
   ?MODULE:bb_scan(T, [{quote, open}, {Active_BB_Element, Active_Text} |Acc_Tree], quote, "");
 

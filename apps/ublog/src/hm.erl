@@ -100,8 +100,8 @@ htmlspecialchars2($<) -> "&lt;";
 htmlspecialchars2($>) -> "&gt;";
 htmlspecialchars2($|) -> "&#124;";
 htmlspecialchars2($`) -> "&#96;";
+htmlspecialchars2($\\) -> "\\\\"; %" fix for code "\x -> .." - "malformed hexadecimal character escape"
 htmlspecialchars2(A) -> A.
-%"
 
 
 %tags_to_values(Data,Acc) ->
